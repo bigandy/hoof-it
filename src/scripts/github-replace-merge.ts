@@ -1,3 +1,16 @@
+const replaceImages = () => {
+  const images = document.getElementsByTagName("img");
+
+  const imgURL = chrome.runtime.getURL(
+    "/public/images/icons/hoof-it_128.png"
+  );
+
+  // replace all images with hoof-it image
+  for (let i = 0; i < images.length; i++) {
+    images[i].src = imgURL;
+  }
+};
+
 function walk(rootNode: any) {
   // Find all the text nodes in rootNode
   var walker = document.createTreeWalker(
@@ -78,6 +91,8 @@ function walkAndObserve(doc: any) {
   // Do the initial text replacements in the document body and title
   walk(doc.body);
   doc.title = replaceText(doc.title);
+
+  replaceImages();
 
   // Observe the body so that we replace text in any added/modified nodes
   bodyObserver = new MutationObserver(observerCallback);
