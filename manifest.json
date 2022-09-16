@@ -4,7 +4,7 @@
   "version": "0.0.0.2",
   "description": "A text replacement Chrome Extension for Replacing the word Merge with Hoof in Github context",
   "icons": {
-    "128": "public/images/icons/hoof-it_128.jpg"
+    "128": "public/images/icons/hoof-it_128.png"
   },
   "content_scripts": [
     {
