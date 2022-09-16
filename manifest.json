@@ -12,5 +12,11 @@
       "matches": ["https://github.com/*"],
       "run_at": "document_end"
     }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["public/images/icons/hoof-it_128.png"],
+      "matches": ["https://github.com/*"]
+    }
   ]
 }
