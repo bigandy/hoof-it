@@ -5,22 +5,10 @@ chrome.runtime.onMessage.addListener(function (request) {
   // listen for messages sent from background.js
   if (request.message === messages.URL_UPDATED) {
     console.log(request); // new url is now in content scripts!
-    replaceImages();
 
     walkAndObserve(document);
   }
 });
-
-const replaceImages = () => {
-  const images = document.getElementsByTagName("img");
-
-  const imgURL = chrome.runtime.getURL("/public/images/icons/hoof-it_128.png");
-
-  // replace all images with hoof-it image
-  for (let i = 0; i < images.length; i++) {
-    images[i].src = imgURL;
-  }
-};
 
 function walk(rootNode: any) {
   // Find all the text nodes in rootNode
@@ -59,7 +47,8 @@ function replaceText(v: any) {
 function isForbiddenNode(node: any) {
   return (
     node.isContentEditable || // DraftJS and many others
-    (node.parentNode && node.parentNode.isContentEditable) || // Special case for Gmail
+    (node.parentNode &&
+      node.parentNode.isContentEditable) || // Special case for Gmail
     (node.tagName &&
       (node.tagName.toLowerCase() == "textarea" || // Some catch-alls
         node.tagName.toLowerCase() == "input"))
@@ -101,8 +90,6 @@ function walkAndObserve(doc: any) {
   // Do the initial text replacements in the document body and title
   walk(doc.body);
   doc.title = replaceText(doc.title);
-
-  replaceImages();
 
   // Observe the body so that we replace text in any added/modified nodes
   bodyObserver = new MutationObserver(observerCallback);
