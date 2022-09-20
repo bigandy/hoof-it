@@ -1,9 +1,20 @@
+import { messages } from "../consts/messages";
+
+chrome.runtime.onMessage.addListener(function (request) {
+  console.log("request", request);
+  // listen for messages sent from background.js
+  if (request.message === messages.URL_UPDATED) {
+    console.log(request); // new url is now in content scripts!
+    replaceImages();
+
+    walkAndObserve(document);
+  }
+});
+
 const replaceImages = () => {
   const images = document.getElementsByTagName("img");
 
-  const imgURL = chrome.runtime.getURL(
-    "/public/images/icons/hoof-it_128.png"
-  );
+  const imgURL = chrome.runtime.getURL("/public/images/icons/hoof-it_128.png");
 
   // replace all images with hoof-it image
   for (let i = 0; i < images.length; i++) {
@@ -48,8 +59,7 @@ function replaceText(v: any) {
 function isForbiddenNode(node: any) {
   return (
     node.isContentEditable || // DraftJS and many others
-    (node.parentNode &&
-      node.parentNode.isContentEditable) || // Special case for Gmail
+    (node.parentNode && node.parentNode.isContentEditable) || // Special case for Gmail
     (node.tagName &&
       (node.tagName.toLowerCase() == "textarea" || // Some catch-alls
         node.tagName.toLowerCase() == "input"))

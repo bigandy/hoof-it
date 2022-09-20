@@ -1,15 +1,18 @@
 {
   "manifest_version": 3,
   "name": "Hoof it",
-  "version": "0.0.0.2",
+  "version": "0.0.0.3",
   "description": "A text replacement Chrome Extension for Replacing the word Merge with Hoof in Github context",
   "icons": {
     "128": "public/images/icons/hoof-it_128.png"
   },
+  "background": {
+    "service_worker": "src/background.js"
+  },
   "content_scripts": [
     {
       "js": ["src/scripts/github-replace-merge.ts"],
-      "matches": ["https://github.com/*"],
+      "matches": ["https://github.com/*/pulls", "https://github.com/*/pull/*"],
       "run_at": "document_end"
     }
   ],
