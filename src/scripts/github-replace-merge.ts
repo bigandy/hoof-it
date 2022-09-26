@@ -6,9 +6,30 @@ chrome.runtime.onMessage.addListener(function (request) {
   if (request.message === messages.URL_UPDATED) {
     console.log(request); // new url is now in content scripts!
 
-    walkAndObserve(document);
+    run();
+  }
+
+  if (request.message === messages.SETTING_UPDATED) {
+    console.log(
+      "setting updated",
+      console.log(request, request.value)
+    );
+    run();
   }
 });
+
+const replaceImages = () => {
+  const images = document.getElementsByTagName("img");
+
+  const imgURL = chrome.runtime.getURL(
+    "/public/images/icons/hoof-it_128.png"
+  );
+
+  // replace all images with hoof-it image
+  for (let i = 0; i < images.length; i++) {
+    images[i].src = imgURL;
+  }
+};
 
 function walk(rootNode: any) {
   // Find all the text nodes in rootNode
@@ -101,6 +122,22 @@ function walkAndObserve(doc: any) {
     titleObserver.observe(docTitle, observerConfig);
   }
 }
-walkAndObserve(document);
+
+const run = () => {
+  chrome.storage.sync.get(
+    "hoofItValue",
+    ({ hoofItValue }) => {
+      if (hoofItValue === "all" || hoofItValue === "text") {
+        walkAndObserve(document);
+      }
+      if (hoofItValue === "all") {
+        console.log("replace those images");
+        replaceImages();
+      }
+    }
+  );
+};
+
+run();
 
 export {};
