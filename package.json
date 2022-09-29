@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "zip": "rm dist.zip && zip -r dist.zip dist",
-    "build:zip": "npm run build && npm run zip"
+    "build:zip": "npm run build && npm run del:zip && npm run zip",
+    "zip": "cd src && zip -r -X ../chrome-extension.zip * -x '**/.DS_Store'",
+    "del:zip": "rm chrome-extension.zip || true"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "1.0.14",
