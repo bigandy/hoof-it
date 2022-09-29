@@ -13,13 +13,10 @@ chrome.tabs.onUpdated.addListener(function (
   }
 });
 
-const hoofItValue = "all";
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.sync.set({ hoofItValue });
-  console.log(
-    "Default default hoof-it value to %cgreen",
-    `color: ${hoofItValue}`
-  );
+  chrome.storage.sync.set({
+    hoofItValue: "all",
+  });
 });
 
 chrome.storage.onChanged.addListener(function (
@@ -30,21 +27,15 @@ chrome.storage.onChanged.addListener(function (
     area === "sync" &&
     changes.hoofItValue?.newValue !==
       changes.hoofItValue?.oldValue
-  )
-    console.log(
-      "New Hoof It Value Changed",
-      changes.hoofItValue?.newValue
+  ) {
+    chrome.tabs.query(
+      { active: true, currentWindow: true },
+      function (tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          message: messages.SETTING_UPDATED,
+          value: changes.hoofItValue?.newValue,
+        });
+      }
     );
-
-  chrome.tabs.query(
-    { active: true, currentWindow: true },
-    function (tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, {
-        message: messages.SETTING_UPDATED,
-        value: changes.hoofItValue?.newValue,
-      });
-    }
-  );
-
-  // setDebugMode(debugMode);
+  }
 });

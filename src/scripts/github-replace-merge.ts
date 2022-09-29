@@ -1,19 +1,12 @@
 import { messages } from "../consts/messages";
 
 chrome.runtime.onMessage.addListener(function (request) {
-  console.log("request", request);
   // listen for messages sent from background.js
   if (request.message === messages.URL_UPDATED) {
-    console.log(request); // new url is now in content scripts!
-
     run();
   }
 
   if (request.message === messages.SETTING_UPDATED) {
-    console.log(
-      "setting updated",
-      console.log(request, request.value)
-    );
     run();
   }
 });
@@ -27,7 +20,21 @@ const replaceImages = () => {
 
   // replace all images with hoof-it image
   for (let i = 0; i < images.length; i++) {
+    const prevSrc = images[i].src;
     images[i].src = imgURL;
+    images[i].dataset.origSrc = prevSrc;
+  }
+};
+
+const resetImages = () => {
+  const images = document.getElementsByTagName("img");
+
+  // replace all hoof-it images with original image
+  for (let i = 0; i < images.length; i++) {
+    const prevSrc = images[i].dataset.origSrc;
+    if (prevSrc) {
+      images[i].src = prevSrc;
+    }
   }
 };
 
@@ -52,14 +59,9 @@ function handleText(textNode: any) {
 }
 
 function replaceText(v: any) {
-  // Fix some misspellings
   v = v.replaceAll("Merge", "Hoof");
   v = v.replaceAll("Merging", "Hoofing");
   v = v.replaceAll("merge", "hoof");
-  v = v.replaceAll(
-    "https://avatars.githubusercontent.com/in/123735?s=80&v=4",
-    "#"
-  );
 
   return v;
 }
@@ -131,8 +133,9 @@ const run = () => {
         walkAndObserve(document);
       }
       if (hoofItValue === "all") {
-        console.log("replace those images");
         replaceImages();
+      } else {
+        resetImages();
       }
     }
   );
