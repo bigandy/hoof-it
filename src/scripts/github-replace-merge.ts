@@ -38,30 +38,38 @@ const resetImages = () => {
   }
 };
 
-function walk(rootNode: any) {
+function walk(rootNode: any, forwards: boolean) {
   // Find all the text nodes in rootNode
   var walker = document.createTreeWalker(
       rootNode,
       NodeFilter.SHOW_TEXT,
       null
-      //   false
     ),
     node;
 
   // Modify each text node's value
   while ((node = walker.nextNode())) {
-    handleText(node);
+    handleText(node, forwards);
   }
 }
 
-function handleText(textNode: any) {
-  textNode.nodeValue = replaceText(textNode.nodeValue);
+function handleText(textNode: any, forwards: boolean) {
+  textNode.nodeValue = replaceText(
+    textNode.nodeValue,
+    forwards
+  );
 }
 
-function replaceText(v: any) {
-  v = v.replaceAll("Merge", "Hoof");
-  v = v.replaceAll("Merging", "Hoofing");
-  v = v.replaceAll("merge", "hoof");
+function replaceText(v: any, forwards: boolean) {
+  if (forwards) {
+    v = v.replaceAll("Merge", "Hoof");
+    v = v.replaceAll("Merging", "Hoofing");
+    v = v.replaceAll("merge", "hoof");
+  } else {
+    v = v.replaceAll("Hoof", "Merge");
+    v = v.replaceAll("Hoofing", "Merging");
+    v = v.replaceAll("hoof", "merge");
+  }
 
   return v;
 }
@@ -78,51 +86,42 @@ function isForbiddenNode(node: any) {
   );
 }
 
-// The callback used for the document body and title observers
-function observerCallback(mutations: any) {
-  var i, node;
-
-  mutations.forEach(function (mutation: any) {
-    for (i = 0; i < mutation.addedNodes.length; i++) {
-      node = mutation.addedNodes[i];
-      if (isForbiddenNode(node)) {
-        // Should never operate on user-editable content
-        continue;
-      } else if (node.nodeType === 3) {
-        // Replace the text for text nodes
-        handleText(node);
-      } else {
-        // Otherwise, find text nodes within the given node and replace text
-        walk(node);
-      }
-    }
-  });
-}
-
-// Walk the doc (document) body, replace the title, and observe the body and title
-function walkAndObserve(doc: any) {
-  var docTitle = doc.getElementsByTagName("title")[0],
-    observerConfig = {
+// Walk the doc (document) body and observe the body
+function walkAndObserve(doc: any, forwards: boolean) {
+  var observerConfig = {
       characterData: true,
       childList: true,
       subtree: true,
     },
-    bodyObserver,
-    titleObserver;
+    bodyObserver;
 
-  // Do the initial text replacements in the document body and title
-  walk(doc.body);
-  doc.title = replaceText(doc.title);
+  // Do the initial text replacements in the document body
+  walk(doc.body, forwards);
+
+  // The callback used for the document body and title observers
+  function observerCallback(mutations: any) {
+    var i, node;
+
+    mutations.forEach(function (mutation: any) {
+      for (i = 0; i < mutation.addedNodes.length; i++) {
+        node = mutation.addedNodes[i];
+        if (isForbiddenNode(node)) {
+          // Should never operate on user-editable content
+          continue;
+        } else if (node.nodeType === 3) {
+          // Replace the text for text nodes
+          handleText(node, forwards);
+        } else {
+          // Otherwise, find text nodes within the given node and replace text
+          walk(node, forwards);
+        }
+      }
+    });
+  }
 
   // Observe the body so that we replace text in any added/modified nodes
   bodyObserver = new MutationObserver(observerCallback);
   bodyObserver.observe(doc.body, observerConfig);
-
-  // Observe the title so we can handle any modifications there
-  if (docTitle) {
-    titleObserver = new MutationObserver(observerCallback);
-    titleObserver.observe(docTitle, observerConfig);
-  }
 }
 
 const run = () => {
@@ -130,7 +129,9 @@ const run = () => {
     "hoofItValue",
     ({ hoofItValue }) => {
       if (hoofItValue === "all" || hoofItValue === "text") {
-        walkAndObserve(document);
+        walkAndObserve(document, true);
+      } else {
+        walkAndObserve(document, false);
       }
       if (hoofItValue === "all") {
         replaceImages();
