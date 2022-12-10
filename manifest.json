@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Hoof it",
-  "version": "0.0.0.7",
+  "version": "0.0.0.8",
   "description": "A text replacement Chrome Extension for Replacing the word Merge with Hoof in Github context",
   "icons": {
     "128": "public/images/icons/hoof-it_128.png"

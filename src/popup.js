@@ -7,12 +7,9 @@ form.addEventListener("change", (e) => {
 });
 
 const getSettings = () => {
-  chrome.storage.sync.get(
-    "hoofItValue",
-    ({ hoofItValue }) => {
-      document.getElementById(hoofItValue).checked = true;
-    }
-  );
+  chrome.storage.sync.get("hoofItValue", ({ hoofItValue }) => {
+    document.getElementById(hoofItValue).checked = true;
+  });
 };
 
 document.addEventListener("DOMContentLoaded", function () {
