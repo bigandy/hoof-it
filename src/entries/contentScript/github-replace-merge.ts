@@ -1,6 +1,7 @@
+import browser from "webextension-polyfill";
 import { messages } from "../consts/messages";
 
-chrome.runtime.onMessage.addListener(function (request) {
+browser.runtime.onMessage.addListener(function (request) {
   // listen for messages sent from background.js
   if (request.message === messages.URL_UPDATED) {
     run();
@@ -14,9 +15,7 @@ chrome.runtime.onMessage.addListener(function (request) {
 const replaceImages = () => {
   const images = document.getElementsByTagName("img");
 
-  const imgURL = chrome.runtime.getURL(
-    "/public/images/icons/hoof-it_128.png"
-  );
+  const imgURL = browser.runtime.getURL("icons/hoof-it_128.png");
 
   // replace all images with hoof-it image
   for (let i = 0; i < images.length; i++) {
@@ -40,11 +39,7 @@ const resetImages = () => {
 
 function walk(rootNode: any, forwards: boolean) {
   // Find all the text nodes in rootNode
-  var walker = document.createTreeWalker(
-      rootNode,
-      NodeFilter.SHOW_TEXT,
-      null
-    ),
+  var walker = document.createTreeWalker(rootNode, NodeFilter.SHOW_TEXT, null),
     node;
 
   // Modify each text node's value
@@ -54,10 +49,7 @@ function walk(rootNode: any, forwards: boolean) {
 }
 
 function handleText(textNode: any, forwards: boolean) {
-  textNode.nodeValue = replaceText(
-    textNode.nodeValue,
-    forwards
-  );
+  textNode.nodeValue = replaceText(textNode.nodeValue, forwards);
 }
 
 function replaceText(v: any, forwards: boolean) {
@@ -78,8 +70,7 @@ function replaceText(v: any, forwards: boolean) {
 function isForbiddenNode(node: any) {
   return (
     node.isContentEditable || // DraftJS and many others
-    (node.parentNode &&
-      node.parentNode.isContentEditable) || // Special case for Gmail
+    (node.parentNode && node.parentNode.isContentEditable) || // Special case for Gmail
     (node.tagName &&
       (node.tagName.toLowerCase() == "textarea" || // Some catch-alls
         node.tagName.toLowerCase() == "input"))
@@ -125,21 +116,18 @@ function walkAndObserve(doc: any, forwards: boolean) {
 }
 
 const run = () => {
-  chrome.storage.sync.get(
-    "hoofItValue",
-    ({ hoofItValue }) => {
-      if (hoofItValue === "all" || hoofItValue === "text") {
-        walkAndObserve(document, true);
-      } else {
-        walkAndObserve(document, false);
-      }
-      if (hoofItValue === "all") {
-        replaceImages();
-      } else {
-        resetImages();
-      }
+  browser.storage.sync.get("hoofItValue").then(({ hoofItValue }) => {
+    if (hoofItValue === "all" || hoofItValue === "text") {
+      walkAndObserve(document, true);
+    } else {
+      walkAndObserve(document, false);
     }
-  );
+    if (hoofItValue === "all") {
+      replaceImages();
+    } else {
+      resetImages();
+    }
+  });
 };
 
 run();
