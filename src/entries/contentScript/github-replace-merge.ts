@@ -57,10 +57,14 @@ function replaceText(v: any, forwards: boolean) {
     v = v.replaceAll("Merge", "Hoof");
     v = v.replaceAll("Merging", "Hoofing");
     v = v.replaceAll("merge", "hoof");
+    v = v.replaceAll("Pull request", "Hoof request");
+    v = v.replaceAll("Pull requests", "Hoof requests");
   } else {
     v = v.replaceAll("Hoof", "Merge");
     v = v.replaceAll("Hoofing", "Merging");
     v = v.replaceAll("hoof", "merge");
+    v = v.replaceAll("Hoof request", "Pull request");
+    v = v.replaceAll("Hoof requests", "Pull requests");
   }
 
   return v;
