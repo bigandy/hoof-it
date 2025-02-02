@@ -1,7 +1,8 @@
 import browser from "webextension-polyfill";
 import { messages } from "../consts/messages";
 
-browser.runtime.onMessage.addListener(function (request) {
+// @ts-expect-error
+browser.runtime.onMessage.addListener(function (request: any) {
   // listen for messages sent from background.js
   if (request.message === messages.URL_UPDATED) {
     run();
