@@ -11,10 +11,13 @@
     "serve:firefox": "web-ext run --start-url \"about:debugging#/runtime/this-firefox\"  --source-dir ./dist/",
     "serve:chrome": "web-ext run -t chromium --start-url \"https://google.com\" --source-dir ./dist/",
     "build:zip": "npm run build && npm run del:zip && npm run zip",
-    "zip": "cd src && zip -r -X ../chrome-extension.zip * -x '**/.DS_Store'",
+    "zip": "cd dist && zip -r -X ../chrome-extension.zip * -x '**/.DS_Store'",
     "del:zip": "rm chrome-extension.zip || true"
   },
   "license": "MIT",
+  "dependencies": {
+    "webextension-polyfill": "^0.10.0"
+  },
   "devDependencies": {
     "@samrum/vite-plugin-web-extension": "^3.0.0",
     "@types/chrome": "0.0.266",
@@ -22,8 +25,5 @@
     "typescript": "4.9.4",
     "vite": "5.2.10",
     "web-ext": "7.11.0"
-  },
-  "dependencies": {
-    "webextension-polyfill": "^0.10.0"
   }
 }

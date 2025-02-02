@@ -13,7 +13,7 @@ const sharedManifest = {
   },
   permissions: ["storage"],
   name: "Hoof it",
-  version: "0.0.0.9",
+  version: "0.0.1.0",
   description:
     "A text replacement Browser Extension for Replacing the word Merge with Hoof in Github context",
 };
@@ -63,6 +63,7 @@ export function getManifest(
   };
 
   if (manifestVersion === 2) {
+    // @ts-ignore
     return {
       ...manifest,
       ...ManifestV2,
