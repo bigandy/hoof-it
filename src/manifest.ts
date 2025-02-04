@@ -1,5 +1,7 @@
 import pkg from "../package.json";
 
+const version = "0.0.1.2";
+
 const sharedManifest = {
   content_scripts: [
     {
@@ -13,9 +15,9 @@ const sharedManifest = {
   },
   permissions: ["storage"],
   name: "Hoof it",
-  version: "0.0.1.0",
+  version,
   description:
-    "A text replacement Browser Extension for Replacing the word Merge with Hoof in Github context",
+    "An Extension for Replacing the word 'Merge' with 'Hoof' on Github",
 };
 
 const browserAction = {
@@ -64,11 +66,12 @@ export function getManifest(
 
   if (manifestVersion === 2) {
     // @ts-ignore
+
     return {
       ...manifest,
       ...ManifestV2,
       manifest_version: manifestVersion,
-    };
+    } as chrome.runtime.ManifestV2;
   }
 
   if (manifestVersion === 3) {

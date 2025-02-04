@@ -2,8 +2,8 @@
   "name": "vite-web-extension",
   "version": "1.0.0",
   "displayName": "Vite Web Extension",
-  "author": "@samrum/vite-plugin-web-extension",
-  "description": "A @samrum/vite-plugin-web-extension web extension",
+  "author": "Andrew JD Hudson",
+  "description": "A Hoof It web extension",
   "scripts": {
     "build": "tsc && vite build",
     "watch": "vite build --watch",

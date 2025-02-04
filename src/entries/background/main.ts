@@ -31,7 +31,7 @@ browser.runtime.onInstalled.addListener(() => {
 });
 
 browser.storage.onChanged.addListener(function (changes, area) {
-  console.log(changes, area);
+  // console.log(changes, area);
   if (
     area === "sync" &&
     changes.hoofItValue?.newValue !== changes.hoofItValue?.oldValue
@@ -39,11 +39,12 @@ browser.storage.onChanged.addListener(function (changes, area) {
     browser.tabs
       .query({ active: true, currentWindow: true })
       .then(function (tabs) {
-        // @ts-ignore
-        browser.tabs.sendMessage(tabs[0].id, {
-          message: messages.SETTING_UPDATED,
-          value: changes.hoofItValue?.newValue,
-        });
+        if (tabs[0].id) {
+          browser.tabs.sendMessage(tabs[0].id, {
+            message: messages.SETTING_UPDATED,
+            value: changes.hoofItValue?.newValue,
+          });
+        }
       });
   }
 });

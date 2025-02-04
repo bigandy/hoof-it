@@ -15,6 +15,4 @@ const getSettings = () => {
   });
 };
 
-document.addEventListener("DOMContentLoaded", function () {
-  getSettings();
-});
+document.addEventListener("DOMContentLoaded", getSettings);
